@@ -99,3 +99,28 @@ def test_question_points_out_of_range_raises_exception():
         Question(title='q1', points=0)
     with pytest.raises(Exception, match="Points must be between 1 and 100"):
         Question(title='q1', points=101)
+
+@pytest.fixture
+def question_with_choices():
+    """Fixture que retorna uma questão configurada com 3 opções."""
+    question = Question(title='Qual a capital de Minas Gerais?', points=10, max_selections=1)
+    question.add_choice('São Paulo', is_correct=False)
+    question.add_choice('Belo Horizonte', is_correct=True)
+    question.add_choice('Rio de Janeiro', is_correct=False)
+    return question
+
+def test_fixture_question_title(question_with_choices):
+    """Testa se a fixture carregou o título corretamente."""
+    assert question_with_choices.title == 'Qual a capital de Minas Gerais?'
+
+def test_fixture_correct_answer(question_with_choices):
+    """Testa a correção usando a estrutura da fixture."""
+    # O ID da segunda opção (Belo Horizonte) deve ser 2
+    correct_id = 2 
+    result = question_with_choices.correct_selected_choices([correct_id])
+    assert len(result) == 1
+    assert result[0] == correct_id
+
+def test_fixture_points_calculation(question_with_choices):
+    """Testa se os pontos da questão da fixture estão corretos."""
+    assert question_with_choices.points == 10
